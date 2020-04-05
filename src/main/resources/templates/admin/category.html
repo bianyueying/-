@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>后台管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" th:href="@{/static/layuiadmin/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/static/layuiadmin/style/admin.css}" media="all">
+    <link rel="stylesheet" th:href="@{/static/css/userInfo.css}" >
+    <link rel="stylesheet" th:href="@{/static/css/index.css}" >
+    <link rel="shortcut icon" th:href="@{/static/favicon.ico}" type="image/x-icon">
+    <script>
+        /^http(s*):\/\//.test(location.href) || alert('请先部署到 localhost 下再访问');
+    </script>
+</head>
+<body>
+    <div class="layui-fluid layui-anim" lay-title="分类管理">
+        <div class="layui-row layui-col-space8">
+            <div class="layui-col-md6 layui-col-sm6 layui-col-xs12">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <blockquote class="layui-elem-quote">职位分类管理界面</blockquote>
+                        <div id="test" class="demo-tree demo-tree-box"></div><br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script th:src="@{/static/js/jquery-3.4.1.js}"></script>
+<script th:src="@{/static/js/jquery.nicescroll.js}"></script>
+<script th:src="@{/static/layui/layui.js}"></script>
+<script th:src="@{/static/dream/localhost.js}"></script>
+<script data-th-inline="none" type="text/javascript">
+
+    layui.use(['tree','util'],function () {
+        $ = layui.$;
+        var tree = layui.tree;
+        tree.render({
+            elem: '#test',
+            data: getData(),
+            edit: ['add', 'update', 'del'],
+            id: 'test',
+            showCheckbox: true,
+            showLine: false,
+            onlyIconControl: true,
+            /*click: function(obj){
+                layer.msg(JSON.stringify(obj.data));
+            },*/
+            operate: function (obj) {
+                var type = obj.type;
+
+                var data = obj.data;
+                //获取点击的节点id
+                var id = data.id;
+                //获取点击的节点名字
+                var title = data.title;
+                //获取点击的节点子节点列表
+                var children = data.children;
+
+                if (type === 'add') {
+                    $.ajax({
+                        url: host+"admin/category/list",
+                        type: "POST",
+                        //这个ID是父ID
+                        data : {id:id},
+                        datatype:"json",
+                        async:false,
+                        success: function (result) {
+                            if (result.status === 200) {
+                                layer.msg(result.msg);
+                                //这里需要刷新页面 以便获取节点相关数据
+                                setTimeout("location.reload()",2000);
+                            }else {
+                                layer.msg(result.msg)
+                            }
+                        }
+                    });
+                } else if (type === 'update') {
+                    $.ajax({
+                        url: host+"admin/category/list",
+                        type: "PUT",
+                        data : {id:id,title:title},
+                        datatype:"json",
+                        async:false,
+                        success: function (result) {
+                            if (result.status === 200) {
+                                layer.msg(result.msg)
+                            } else {
+                                layer.msg(result.msg)
+                            }
+                        }
+                    });
+                } else if (type === 'del') {
+                    if (children != null) {
+                        layer.msg("有子节点 无法删除");
+                        //阻止页面删除 我特么真是个天才
+                        d.stop();
+                        return false;
+                    }
+                    if (children == null) {
+                        $.ajax({
+                            url: host+"admin/category/list",
+                            type: "DELETE",
+                            data : {id:id},
+                            datatype:"json",
+                            async:false,
+                            success: function (result) {
+                                if (result.status === 200) {
+                                    layer.msg(result.msg);
+                                } else {
+                                    layer.msg(result.msg)
+                                }
+                            },
+                            error: function () {
+                                tree.reload('test',{
+                                });
+                                layer.msg("权限不足,删除失败");
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    });
+
+    function getData() {
+        let data = "";
+        $.ajax({
+            url: host+"admin/category/list",
+            type:"GET",
+            datatype:"json",
+            async:false,
+            success:function(result){
+                data = result;
+            }
+        });
+        return data;
+    }
+
+</script>
+</body>
+</html>

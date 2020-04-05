@@ -1,0 +1,74 @@
+
+#bml-avatar img {
+    width: 5rem;
+    border-radius: 50%;
+    margin: .5rem;
+    cursor: pointer;
+}
+
+#bml-avatar .layui-tab-item {
+    margin-left: 1rem;
+}
+
+
+#user-add {
+    margin-top: 10px;
+    margin-left: -40px;
+    margin-right: 10px;
+}
+
+#user-add .layui-treeSelect .ztree li a, .ztree li span {
+    margin: 0 0 2px 3px !important;
+}
+
+
+#bml-user-profile #user-profile, #bml-user-profile .user-profile-card {
+    display: inline-block;
+}
+
+#bml-user-profile #user-img, #bml-user-profile #user-info {
+    display: inline-block;
+    float: left;
+}
+
+#bml-user-profile #user-img img {
+    width: 7rem;
+    margin: 1rem;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#bml-user-profile #user-info {
+    margin: .95rem 0 .95rem 1.2rem;
+}
+
+#bml-user-profile #user-info div {
+    margin: 3px 0;
+    max-width: 22rem;
+}
+
+#bml-user-profile #options-wrapper {
+    text-align: center;
+    margin-top: .5rem;
+}
+
+#bml-user-profile #update-user-info {
+    cursor: pointer;
+    margin-left: -0.3rem;
+}
+
+#bml-user-profile #options-wrapper a {
+    padding: 4px 6px;
+    color: rgba(0, 0, 0, 0.65);
+    border: 1px solid #d9d9d9;
+    border-radius: 2px;
+}
+
+#bml-user-profile #options-wrapper a:hover {
+    color: #40a9ff;
+    border-color: #40a9ff;
+}
+
+#bml-user-profile .layui-form-item {
+    margin-bottom: 0;
+}

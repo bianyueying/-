@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bml.mapper.BmlPermissionPlusMapper">
+
+    <resultMap id="resultMap" type="bml.entity.BmlPermissionDto">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="label" jdbcType="VARCHAR" property="label" />
+        <result column="permission" jdbcType="VARCHAR" property="permission" />
+        <result column="parent_id" jdbcType="INTEGER" property="parentId" />
+        <result column="order_by" jdbcType="INTEGER" property="orderBy" />
+        <result column="deleted" jdbcType="INTEGER" property="deleted" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+
+    <select id="getPermsTree" resultMap="resultMap">
+        SELECT * FROM bml_permission WHERE deleted = 0 ORDER BY `order_by` ASC
+    </select>
+
+</mapper>

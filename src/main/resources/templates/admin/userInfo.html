@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="utf-8">
+    <title>个人信息</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" th:href="@{/static/favicon.ico}" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/static/layuiadmin/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/static/layuiadmin/style/admin.css}" media="all">
+    <link rel="stylesheet" th:href="@{/static/css/index.css}" media="all">
+    <link rel="stylesheet" th:href="@{/static/css/userInfo.css}" media="all">
+</head>
+<body>
+
+<div class="layui-fluid layui-anim" id="bml-user-profile" lay-title="个人中心">
+    <div class="layui-row layui-col-space8">
+        <div class="layui-col-md12 layui-col-sm6 layui-col-xs12">
+            <div class="layui-card">
+                <div class="layui-card-header">个人信息</div>
+
+                <div class="layui-card-body user-profile-card">
+                    <div id="user-profile">
+
+                        <div id="user-img" style="margin-top: 30px">
+                            <img alt="头像" title="头像好看不?" th:src="@{/static/images/{avatar}(avatar=${user.avatar})}" src="" style="CURSOR:hand" onclick="openAvatar()">
+                            <div id="options-wrapper">
+                                <div id="update-user-info">
+                                    <button type="button" class="layui-btn layui-btn-radius layui-btn-sm" onclick="openAdd()" >
+                                        <i class="layui-icon layui-icon-set"></i>编辑资料
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="user-info">
+                            <div>
+                                <span class="layui-icon layui-icon-user"></span> 账号 :
+                                <a style="color: cyan" th:text="${user.getUsername()}"></a>
+                            </div>
+                            <div>
+                                <span class="layui-icon layui-icon-username"></span> 昵称 :
+                                <a th:text="${user.getNickname()}"></a>
+                            </div>
+                            <div>
+                                <span class="layui-icon layui-icon-service"></span> 角色 :
+                                <a th:text="${user.getRoleId()} == 1?'超级管理员':'普通用户'"></a>
+                            </div>
+                            <div>
+                                <span class="layui-icon layui-icon-home"></span> 头像 :
+                                <a th:href="@{'http://localhost:8080/static/images/'+${user.getAvatar()}}" th:text="${user.getAvatar()} ?: '暂无头像链接'"></a>
+                            </div>
+                            <div th:switch="${user.getGender()}">
+                                <span class="layui-icon layui-icon-female"></span> 性别 :
+                                <a th:case="'0'">男</a>
+                                <a th:case="'1'">女</a>
+                                <a th:case="'2'">保密</a>
+                            </div>
+                            <div>
+                                <span class="layui-icon layui-icon-cellphone"></span> 电话 :
+                                <a th:text="${user.getPhone()} ?: '暂无电话'"></a>
+                            </div>
+                            <div>
+                                <span class="layui-icon layui-icon-release"></span> 邮箱 :
+                                <a th:text="${user.getEmail()} ?: '暂无邮箱'"></a>
+                            </div>
+                            <div>
+                                <span class="layui-icon layui-icon-read"></span> 简介 :
+                                <a th:text="${user.getDescription()} ?: '暂无个人简介'"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--更新用户信息框 被引用的节点必须放在body的最外层-->
+<div class="layui-fluid" id="user-add" style="display: none">
+    <form class="layui-form" action="" lay-filter="user-add-form" id="user-add-form">
+
+        <div class="layui-form-item" style="display: none">
+            <label class="layui-form-label">用户ID：</label>
+            <div class="layui-input-inline">
+                <input type="hidden" id="id" name="id" autocomplete="off" class="layui-input" th:value="${user.getId()}">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">账号：</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="username" name="username" minlength="2" maxlength="10" lay-verify="range|username"
+                           autocomplete="off" class="layui-input" th:value="${user.getUsername()}" readonly="">
+                </div>
+                <div class="layui-form-mid layui-word-aux">唯一</div>
+            </div>
+            <div class="layui-inline" style="margin-left: -38px">
+                <label class="layui-form-label">昵称：</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="nickname" name="nickname" minlength="2" maxlength="10" lay-verify="range|username"
+                           autocomplete="off" class="layui-input" th:value="${user.getNickname()}">
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">手机：</label>
+                <div class="layui-input-inline">
+                    <input type="tel" id="phone" name="phone" lay-verify="required|phone" autocomplete="off" class="layui-input" th:value="${user.getPhone()}">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">邮箱：</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="email" name="email" lay-verify="email" autocomplete="off" class="layui-input" th:value="${user.getEmail()}">
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">头像：</label>
+            <div class="layui-input-inline">
+                <input type="url" id="avatar" name="avatar" autocomplete="off" class="layui-input" th:value="${user.getAvatar()}" readonly="">
+            </div>
+            <div class="layui-form-mid layui-word-aux">请点击头像以更改图片</div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">性别：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="sex" value="0" title="男性" th:field="*{user.gender}">
+                <input type="radio" name="sex" value="1" title="女性" th:field="*{user.gender}">
+                <input type="radio" name="sex" value="2" title="保密" th:field="*{user.gender}">
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">简介：</label>
+            <div class="layui-input-block">
+                <textarea id="description" name="description" maxlength="100" class="layui-textarea" th:text="${user.getDescription()}"></textarea>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<div class="layui-tab layui-tab-brief" id="bml-avatar" lay-filter="avatar-tab" style="display: none">
+    <ul class="layui-tab-title">
+        <li class="layui-this">后田花子</li>
+        <li>阿里系</li>
+        <!--<li>脸萌</li>-->
+    </ul>
+    <div class="layui-tab-content" id="slider" onclick="changePic(event);">
+        <input type="hidden" id="userId" name="userId" th:value="${user.getId()}">
+        <div class="layui-tab-item layui-show" >
+            <img data-th-src="@{/static/images/01.jpg}" title="点击更换" alt="" src="" id="01.jpg">
+            <img data-th-src="@{/static/images/02.jpg}" title="点击更换" alt="" src="" id="02.jpg">
+            <img data-th-src="@{/static/images/03.jpg}" title="点击更换" alt="" src="" id="03.jpg">
+            <img data-th-src="@{/static/images/04.jpg}" title="点击更换" alt="" src="" id="04.jpg">
+            <img data-th-src="@{/static/images/05.jpg}" title="点击更换" alt="" src="" id="05.jpg">
+            <img data-th-src="@{/static/images/06.jpg}" title="点击更换" alt="" src="" id="06.jpg">
+        </div>
+        <div class="layui-tab-item">
+            <img data-th-src="@{/static/images/11.png}" title="点击更换" alt="" src="" id="11.png">
+            <img data-th-src="@{/static/images/12.png}" title="点击更换" alt="" src="" id="12.png">
+            <img data-th-src="@{/static/images/13.png}" title="点击更换" alt="" src="" id="13.png">
+            <img data-th-src="@{/static/images/14.png}" title="点击更换" alt="" src="" id="14.png">
+            <img data-th-src="@{/static/images/15.png}" title="点击更换" alt="" src="" id="15.png">
+            <img data-th-src="@{/static/images/16.png}" title="点击更换" alt="" src="" id="16.png">
+        </div>
+        <!--<div class="layui-tab-item">
+            <img data-th-src="@{/static/images/21.jpg}" title="点击更换" alt="" src="">
+            <img data-th-src="@{/static/images/22.jpg}" title="点击更换" alt="" src="">
+            <img data-th-src="@{/static/images/23.jpg}" title="点击更换" alt="" src="">
+            <img data-th-src="@{/static/images/24.jpg}" title="点击更换" alt="" src="">
+            <img data-th-src="@{/static/images/25.jpg}" title="点击更换" alt="" src="">
+            <img data-th-src="@{/static/images/26.jpg}" title="点击更换" alt="" src="">
+        </div>-->
+    </div>
+</div>
+
+<script th:src="@{/static/js/jquery-3.4.1.js}"></script>
+<script th:src="@{/static/layui/layui.js}"></script>
+<script th:src="@{/static/dream/localhost.js}"></script>
+<script data-th-inline="none" type="text/javascript">
+
+    function openAvatar() {
+        layui.use(['layer','jquery'],function () {
+            var $ = layui.jquery;
+            var layer = layui.layer;
+            layer.open({
+                type: 1,
+                resize: false,
+                area: ["640px","220px"],
+                content: $('#bml-avatar'),
+                title: '更新头像',
+                success:function () {
+                    $(':focus').blur();
+                },
+            });
+        })
+    }
+
+    function changePic(e) {
+        layui.use(['layer','jquery'],function () {
+            var layer = layui.layer;
+            var $ = layui.jquery;
+            const ele = e.target;
+            if (ele.tagName === "IMG" ) {
+                const userId = document.getElementById("userId").value;
+                const avatar = ele.id;
+                var bml = {
+                    id: userId,
+                    avatar: avatar
+                };
+                $.ajax({
+                    url: host + "admin/user",
+                    type: 'put',
+                    data: JSON.stringify(bml),
+                    dataType: "json",
+                    contentType: "application/json;charset=utf-8",
+                    success: function (result) {
+                        if (result.status === 200) {
+                            layer.msg("更改头像成功 自动刷新");
+                            setTimeout(window.location.reload,1500);
+                            //window.location.reload();
+                        } else {
+                            layer.msg("更改头像失败");
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+    /*个人信息修改模态框*/
+    function openAdd() {
+        layui.use(['layer','form'],function () {
+            var layer = layui.layer;
+            var form = layui.form;
+
+            //打开弹出层
+            layer.open({
+                type:1,
+                /*固定大小 禁止拉伸*/
+                resize:true,
+                btn:['确定','取消'],
+                area:$(window).width() <= 750 ? '90%' : '60%',
+                content: $('#user-add'),
+                title:'更新用户信息',
+                success:function () {
+                    $(':focus').blur();
+                    form.render();
+                },
+
+                btn1: function () {
+                    const data = form.val('user-add-form');
+                    $.ajax({
+                        url: host + "admin/user",
+                        type: 'put',
+                        data: JSON.stringify(data),
+                        dataType: "json",
+                        contentType: "application/json;charset=utf-8",
+                        success: function (result) {
+                            if (result.status === 200) {
+                                layer.msg("更新成功 一秒后为您返回");
+
+                                setTimeout("location.reload()",1000);
+                            } else {
+                                layer.msg("更新失败");
+                                location.reload();
+                            }
+                        }
+                    });
+                    return false;
+                }
+            });
+        })
+    }
+
+
+</script>
+</body>
+</html>

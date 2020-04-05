@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="utf-8">
+    <title>后台管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" th:href="@{/static/layuiadmin/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/static/layuiadmin/style/admin.css}" media="all">
+    <link rel="stylesheet" th:href="@{/static/css/userInfo.css}" >
+    <link rel="stylesheet" th:href="@{/static/css/index.css}" >
+    <link rel="stylesheet" th:href="@{/static/css/eleTree.css}" media="all">
+    <link rel="shortcut icon" th:href="@{/static/favicon.ico}" type="image/x-icon">
+    <script>
+        /^http(s*):\/\//.test(location.href) || alert('请先部署到 localhost 下再访问');
+    </script>
+</head>
+
+<body>
+<div class="layui-fluid layui-anim" lay-title="角色管理">
+    <div class="layui-row layui-col-space8">
+        <div class="layui-col-md7 layui-col-sm6 layui-col-xs12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <form class="layui-form layui-table-form" lay-filter="role-table-form" id="role-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md9 layui-col-sm9 layui-col-xs9">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" style="margin-top: 20px;margin-left: -5px">
+                                        <label class="layui-form-label layui-form-label-sm">角色名称：</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="name" name="name" autocomplete="off" class="layui-input">
+                                        </div>
+                                        <button class="layui-btn layui-btn-normal table-action" onclick="return false;" id="search" data-type="reload">Search</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table id="roleTable" lay-filter="roleTable" class="layui-table"></table>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-md5 layui-col-sm6 layui-col-xs12" id="add-form" style="display: flex">
+            <div class="layui-card">
+                <div class="layui-card-header" id="form-header">新增角色</div>
+                <div class="layui-card-body">
+                    <form class="layui-form" action="" id="role-form" lay-filter="role-form">
+                        <!--处理表单验证失效的情况：
+                            1.表单元素必须form中，class必须为layui-form
+                            2.form中不能包含其他form
+                            3.提交按钮需添加lay-submit="" -->
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">角色名称：</label>
+                            <div class="layui-input-block">
+                                <input type="text" class="layui-input" name="roleName" id="roleName" lay-verify="required" placeholder="请输入角色名称:"
+                                       autocomplete="false" >
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">角色描述：</label>
+                            <div class="layui-input-block">
+                                <textarea id="description" name="description" maxlength="50" class="layui-textarea"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">角色权限：</label>
+                            <br>
+                            <div class="eleTree ele1" style="margin-left: 110px;margin-top: -18px"></div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button shiro:hasAnyRoles="root,admin" style="margin-left: 260px;margin-top: 10px" class="layui-btn layui-btn-normal" id="addRole" lay-submit="" lay-filter="addRole">提交</button>
+                                <button type="button" shiro:lacksRole="root,admin" style="margin-left: 233px;margin-top: 10px" class="layui-btn layui-btn-normal layui-btn-disabled" lay-submit="" lay-filter="*">权限不足</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-md5 layui-col-sm6 layui-col-xs12" id="update-form" style="display: none">
+            <div class="layui-card">
+                <div class="layui-card-header">更新角色</div>
+                <div class="layui-card-body">
+                    <form class="layui-form" action="" id="demo" lay-filter="demo">
+                        <div class="layui-form-item" style="display: none">
+                            <div class="layui-input-block">
+                                <input type="text" class="layui-input" name="id" id="id" lay-verify="required" autocomplete="false" >
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">角色名称：</label>
+                            <div class="layui-input-block">
+                                <input type="text" class="layui-input" name="roleName1" id="roleName1" lay-verify="required" placeholder="请输入角色名称:"
+                                       autocomplete="false" >
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">角色描述：</label>
+                            <div class="layui-input-block">
+                                <textarea id="description1" name="description1" maxlength="50" class="layui-textarea"></textarea>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">角色权限：</label>
+                            <br>
+                            <div class="eleTree ele2" style="margin-left: 110px;margin-top: -18px"></div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button style="margin-left: 253px;margin-top: 10px" class="layui-btn layui-btn-normal" id="updateRole" lay-submit="" lay-filter="updateRole">更新</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/html" id="barDemo">
+    <a shiro:hasAnyRoles="root,admin" class="layui-btn layui-btn-xs" lay-event="update">更新</a>
+    <a shiro:hasAnyRoles="root,admin" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+    <a shiro:lacksRole="root,admin" class="layui-badge-dot layui-bg-orange"><a>无权限</a></a>
+</script>
+
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-container">
+        <!--加上type=button解决点击按钮后自动刷新页面问题-->
+        <button type="button" shiro:hasAnyRoles="root,admin" class="layui-btn layui-btn-sm" lay-event="getIds">删除选中数据</button>
+        <div shiro:lacksRole="root,admin" class="layui-btn layui-btn-sm layui-btn-disabled">删除选中数据</div>
+    </div>
+</script>
+
+<script th:src="@{/static/js/jquery-3.4.1.js}"></script>
+<script th:src="@{/static/js/jquery.nicescroll.js}"></script>
+<script th:src="@{/static/layui/layui.js}"></script>
+<script th:src="@{/static/dream/localhost.js}"></script>
+<script data-th-inline="none" type="text/javascript">
+
+    //当前页面禁止使用Enter键提交表单
+    $(document).keydown(function(event){
+        if (event.keyCode === 13) {
+            return false;
+        }
+    });
+    function getData() {
+        let data = "";
+        $.ajax({
+            url: host + "admin/user/permission",
+            type:"GET",
+            datatype:"json",
+            //这里不能改为true
+            async:false,
+            success:function(result){
+                data = result;
+            }
+        });
+        return data;
+    }
+
+    layui.config({
+        base: "/static/js/"
+    }).use([ 'element','util','layer','jquery','eleTree','form'], function () {
+        var $ = layui.jquery;
+        var form = layui.form;
+        var eleTree = layui.eleTree;
+
+        const ele = eleTree.render({
+            elem: '.ele1',
+            id:'bml',
+            data: getData(),
+            emptText: '获取数据失败 请检查',
+            showLine: true,
+            checkStrictly: true,
+            showCheckbox: true,
+        });
+
+        function formReset(){
+            document.getElementById("role-form").reset();
+            ele.unCheckNodes();
+        }
+
+        form.on('submit(role-form)',function () {
+            var Array = ele.getChecked(false,true);
+            if (Array.length === 0) {
+                layer.alert('<div style="text-align: center">客官,勾选一个权限吧！</div>')
+            } else if (Array.length > 1){
+                layer.alert('<div style="text-align: center">请勾选一个,不要多选!!</div>')
+            } else {
+                var id = Array[0].id;
+                var roleName = $('#roleName').val();
+                var description = $('#description').val();
+                var bml = {
+                    permission: id,
+                    roleName: roleName,
+                    roleDescription: description,
+                };
+                $.ajax({
+                    url: host + 'admin/user/role',
+                    type: 'POST',
+                    data: JSON.stringify(bml),
+                    dataType: 'json',
+                    contentType: "application/json;charset=UTF-8",
+                    success: function (result) {
+                        if (result.status === 200) {
+                            //重置表单
+                            formReset();
+                            //刷新左侧表格
+
+                            layer.msg(result.msg)
+                        } else {
+                            layer.msg(result.msg)
+                        }
+                    },
+                    error: function () {
+                        layer.msg("添加失败!")
+                    }
+                });
+            }
+            return false;
+        });
+    });
+
+    /*回显表单元素 已确定 谨慎更改*/
+    layui.config({
+        base: "/static/js/"
+    }).use(['table','form','layer','eleTree'],function () {
+        var table = layui.table;
+        var form = layui.form;
+        var layer = layui.layer;
+        var eleTree = layui.eleTree;
+        table.render({
+            elem: '#roleTable',
+            method:'GET',
+            async: false,
+            dataType:'JSON',
+            url: host + 'admin/user/roles',
+            id: 'roleReload',
+            data: 'name=',
+            page: true,
+            limits:[5,10,20],
+            limit:5,
+            toolbar: '#toolbar',
+            cols: [[
+                {type:'checkbox'}
+                ,{field: 'roleName', title: '角色名', width:90}
+                ,{field: 'roleDescription', title: '具体描述', width:190}
+                ,{field: 'createTime', title: '创建时间',
+                    templet: '<div>{{layui.util.toDateString(d.createTime, "yyyy-MM-dd  HH:mm:ss") }}</div>',
+                    width: 180, sort: true}
+                ,{fixed: 'right', title:'操作',align: 'center', toolbar: '#barDemo', width:120}
+            ]],
+        });
+        var $ = layui.$, active = {
+            reload: function () {
+                //获取角色名
+                var name = $('#name');
+                //执行重载
+                table.reload('roleReload', {
+                    page: {
+                        curr: 1
+                    }
+                    , where: {
+                        name: name.val(),
+                    }
+                }, 'data');
+            }
+        };
+        $('#search').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+        //工具头批量删除数据
+        table.on('toolbar(roleTable)',function (obj) {
+            const checkStatus = table.checkStatus(obj.config.id);
+            if (obj.event === 'getIds') {
+                const data = checkStatus.data;
+                const ids = [];
+                for (let i = 0; i < data.length; i++) {
+                    ids.push(data[i].id);
+                }
+                if (ids.length === 0) {
+                    layer.msg("未选中数据");
+                    return false;
+                } else {
+                    layer.confirm('<div style="text-align: center;">确定批量删除这 '+ids.length+' 条角色信息?</div>',{title: '确认删除框',btn: ['删除','取消']}, function () {
+                        $.ajax({
+                            url: host + "admin/user/roles",
+                            type: 'DELETE',
+                            data : {ids:ids},
+                            //传递数组必要条件
+                            traditional:true,
+                            async:true,
+                            dataType : "json",
+                            success: function (result) {
+                                if (result.status === 200) {
+                                    table.reload('roleReload',{
+                                        page: {
+                                            curr: 1
+                                        }
+                                    });
+                                    layer.msg(result.msg,{icon: 6});
+                                } else {
+                                    layer.msg(result.msg,{icon: 5})
+                                }
+                            }
+                        });
+                    })
+                }
+            }
+        });
+        //右侧表格菜单部分
+        table.on('tool(roleTable)', function(obj){
+            const data = obj.data;
+            const id = data.id;
+            if(obj.event === 'delete'){
+                layer.confirm('<div style="text-align: center;">确定删除该条角色信息?</div>',{title: '确认删除框',btn: ['删除','取消']}, function (index) {
+                    $.ajax({
+                        url: host + "admin/user/role",
+                        type: 'DELETE',
+                        data : {id:id},
+                        dataType: "json",
+                        async:true,
+                        success: function (result) {
+                            if (result.status === 200) {
+                                //前端删除这一行
+                                obj.del();
+                                //重载
+                                table.reload('roleReload',{
+                                    page: {
+                                        curr: 1
+                                    }
+                                });
+                                //关闭弹框
+                                layer.close(index);
+                                //弹出信息框
+                                layer.msg(result.msg,{icon: 6});
+                            } else {
+                                layer.msg(result.msg,{icon: 5})
+                            }
+                        }
+                    })
+                })
+            } else if (obj.event === 'update') {
+                var add = document.getElementById("add-form"),
+                    update = document.getElementById("update-form");
+                add.style.display = 'none';
+                update.style.display = 'block';
+                $.ajax({
+                    url: host + "admin/user/role",
+                    type: 'GET',
+                    data : {id:id},
+                    dataType: "json",
+                    async:false,
+                    success: function (result) {
+
+                        var ele2 = eleTree.render({
+                            elem: '.ele2',
+                            data: getData(),
+                            emptText: '获取数据失败 请检查',
+                            showLine: true,
+                            checkStrictly: true,
+                            defaultExpandAll: true,
+                            showCheckbox: true,
+                            defaultCheckedKeys: [result.permission],
+                        });
+                        form.val("demo",{
+                            "id": result.id,
+                            "roleName1": result.roleName,
+                            "description1": result.roleDescription,
+                        });
+                        function formReset2() {
+                            document.getElementById("demo").reset();
+                            ele2.unCheckNodes();
+                        }
+                        form.on('submit(updateRole)',function () {
+                            const Array = ele2.getChecked(false, true);
+                            if (Array.length === 0) {
+                                layer.alert('<div style="text-align: center">客官,勾选一个权限吧！</div>');
+                                return false;
+                            } else if (Array.length > 1){
+                                layer.alert('<div style="text-align: center">请勾选一个,不要多选!!</div>')
+                            } else {
+                                var id = $('#id').val();
+                                var permission = Array[0].id;
+                                var roleName = $('#roleName1').val();
+                                var description = $('#description1').val();
+                                var bml = {
+                                    id: id,
+                                    roleName: roleName,
+                                    roleDescription: description,
+                                    permission:permission,
+                                };
+                                $.ajax({
+                                    url: host + 'admin/user/role',
+                                    type: 'PUT',
+                                    data: JSON.stringify(bml),
+                                    dataType: 'json',
+                                    contentType: "application/json;charset=UTF-8",
+                                    success: function (result) {
+                                        if (result.status === 200) {
+                                            formReset2();
+                                            add.style.display = 'flex';
+                                            update.style.display = 'none';
+                                            layer.msg(result.msg)
+                                        } else {
+                                            layer.msg(result.msg)
+                                        }
+                                    }
+                                });
+                                return false;
+                            }
+                            return false;
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+</script>
+</body>
+</html>

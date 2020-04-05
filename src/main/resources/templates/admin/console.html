@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>系统首页</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" th:href="@{/static/favicon.ico}" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/static/layuiadmin/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/static/layuiadmin/style/admin.css}" media="all">
+    <link rel="stylesheet" th:href="@{/static/css/index.css}" media="all">
+    <script th:src="@{/static/js/echarts.js}" type="text/javascript"></script>
+    <script th:src="@{/static/js/macarons.js}" type="text/javascript"></script>
+    <script>
+        /^http(s*):\/\//.test(location.href) || alert('请先部署到 localhost 下再访问');
+    </script>
+</head>
+<body>
+<div class="layui-fluid layui-anim" id="bml-index" lay-title="系统首页">
+    <div class="layui-row layui-col-space8">
+        <div class="layui-col-md12 layui-col-sm12 layui-col-xs12">
+            <div class="layui-card">
+                <div class="layui-card-body layui-anim layui-anim-fadein">
+                    <div class="layui-row welcome-info">
+                        <div class="layui-col-md8 layui-col-sm12 layui-col-xs12">
+                            <div class="layui-row welcome-info-wrapper">
+                                <div class="user-header" id="avatar">
+                                    <img alt="" id="user-avatar" th:src="@{/static/images/{avatar}(avatar=${user.avatar})}" src="">
+                                </div>
+                                <div class="user-info">
+                                    <div class="layui-row">
+                                        <div class="random-message">
+                                            <span>亲爱的 <a style="color: cyan"> <span th:text="${user.getNickname()}"></span></a> ，你好啊！</span>
+                                        </div>
+                                        <div class="user-dept">
+                                            <span id="user-dept"></span>这一块不知道是干什么的 | <span th:text="${user.getRoleId()} == 1?'超级管理员':'普通用户'">用户角色名</span>
+                                        </div>
+                                        <div class="user-login-info">
+                                            上次登录时间 : <span th:text="${#dates.format(user.getLastTime(),'yyyy年MM月dd日 HH时mm分ss秒')}">时间</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md4 layui-col-sm12 layui-col-xs12">
+                            <div class="layui-col-md-offset5">
+                                <table class="login-count-table">
+                                    <tr>
+                                        <td>今日访问</td>
+                                        <td>总访问量</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="count" id="today-visit-count">
+                                            <span th:text="${todayCount}">今日访问</span>
+                                        </td>
+                                        <td class="count" id="total-visit-count">
+                                            <span th:text="${count}">浏览总数</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-md6 layui-col-sm6 layui-col-xs12">
+            <div class="layui-card">
+                <div class="layui-card-header">最近10天系统访问记录</div>
+                <div class="layui-card-body">
+                    <div id="leftChart" style="height: 355px;width: 570px;margin-left: -10px;margin-bottom: -15px"></div>
+                </div>
+            </div>
+        </div>
+
+        <!--右侧正在进行中的项目 充数的-->
+        <div class="layui-col-md6 layui-col-sm6 layui-col-xs12">
+
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <table class="project-table">
+                        <tr>
+                            <td style="padding: .8rem;">充数的</td>
+                            <td style="padding: .8rem;text-align: right">
+                                <a target="_blank" href="https://github.com/wuyouzhuguli?tab=repositories">所有项目</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="project-table-td">
+                                <div class="layui-row">
+                                    <div class="layui-col-md12 layui-col-xs12">
+                                        <div class="layui-row">
+                                            <div class="layui-col-md12">
+                                                <a target="_blank" href="https://github.com/wuyouzhuguli/FEBS-Shiro">FEBS
+                                                    Shiro</a>
+                                            </div>
+                                            <div class="project-desc">
+                                                Spring Boot 2.0.4 & Shiro1.4.0 权限管理系统。
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="project-table-td">
+                                <div class="layui-row">
+                                    <div class="layui-col-md12 layui-col-xs12">
+                                        <div class="layui-row">
+                                            <div class="layui-col-md12">
+                                                <a target="_blank" href="https://github.com/wuyouzhuguli/FEBS-Security">FEBS
+                                                    Security</a>
+                                            </div>
+                                            <div class="project-desc">
+                                                Spring Boot 2.0.4 & Spring Security 5.0.7 权限管理系统。
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="project-table-td">
+                                <div class="layui-row">
+                                    <div class="layui-col-md12 layui-col-xs12">
+                                        <div class="layui-row">
+                                            <div class="layui-col-md12">
+                                                <a target="_blank" href="https://github.com/wuyouzhuguli/FEBS-Vue">FEBS
+                                                    Vue</a>
+                                            </div>
+                                            <div class="project-desc">
+                                                FEBS-Shiro前后端分离版本，前端架构采用Vue全家桶。
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="project-table-td">
+                                <div class="layui-row">
+                                    <div class="layui-col-md12 layui-col-xs12">
+                                        <div class="layui-row">
+                                            <div class="layui-col-md12">
+                                                <a target="_blank" href="https://github.com/wuyouzhuguli/FEBS-Actuator">FEBS
+                                                    Actuator</a>
+                                            </div>
+                                            <div class="project-desc">
+                                                使用Spring Boot Admin 2.0.2构建，用于监控FEBS。
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="project-table-td">
+                                <div class="layui-row">
+                                    <div class="layui-col-md12 layui-col-xs12">
+                                        <div class="layui-row">
+                                            <div class="layui-col-md12">
+                                                <a target="_blank" href="https://github.com/wuyouzhuguli/SpringAll">SpringAll</a>
+                                            </div>
+                                            <div class="project-desc">
+                                                循序渐进学习Spring Boot、Spring Cloud与Spring Security。
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="project-table-td">
+                                <div class="layui-row">
+                                    <div class="layui-col-md12 layui-col-xs12">
+                                        <div class="layui-row">
+                                            <div class="layui-col-md12">
+                                                <a target="_blank" href="https://github.com/wuyouzhuguli/Conciseness">Conciseness</a>
+                                            </div>
+                                            <div class="project-desc">
+                                                Leanote博客主题Conciseness。
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="project-table-td">
+                                <div class="layui-row">
+                                    <div class="layui-col-md12 layui-col-xs12">
+                                        <div class="layui-row">
+                                            <div class="layui-col-md12">
+                                                <a target="_blank"
+                                                   href="https://github.com/wuyouzhuguli/Material-Design">Material
+                                                    Design</a>
+                                            </div>
+                                            <div class="project-desc">
+                                                Leanote博客主题Material Design。
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="project-table-td">
+                                <div class="layui-row">
+                                    <div class="layui-col-md12 layui-col-xs12">
+                                        <div class="layui-row">
+                                            <div class="layui-col-md12">
+                                                <a target="_blank"
+                                                   href="https://github.com/wuyouzhuguli/Summer">Summer</a>
+                                            </div>
+                                            <div class="project-desc">
+                                                Leanote博客主题🌴Summer。
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script th:src="@{/static/js/jquery-3.4.1.js}"></script>
+<script th:src="@{/static/js/jquery.nicescroll.js}"></script>
+<script th:src="@{/static/layuiadmin/layui/layui.js}"></script>
+<script th:src="@{/static/layuiadmin/config.js}"></script>
+<script th:src="@{/static/dream/localhost.js}"></script>
+<script data-th-inline="none" type="text/javascript">
+
+    $(document).ready(function(){
+        $("html").niceScroll();
+    });
+
+    /*已确定 谨慎更改*/
+    var myChart = echarts.init(document.getElementById('leftChart'),'macarons');
+    // 指定图表的配置项和数据
+    option = {
+        title: {
+            text: '日访问曲线'
+        },
+        tooltip: {},
+        legend: {
+            data:['该日访问量']
+        },
+        xAxis: {
+            /*下面这句是设置横坐标的文字全部显示，不间隔*/
+            axisLabel:{interval:0},
+            data: []
+        },
+        grids: {
+            show: true,
+            borderWidth: 0,
+            backgroundColor: '#fff',
+            shadowColor: 'rgba(0, 0, 0, 0.3)',
+            shadowBlur: 2
+        },
+        yAxis: {},
+        series: [{
+            smooth:true,
+            name: '该日访问量',
+            type: 'line',
+            itemStyle : { normal: {label : {show: true}}},
+            data: []
+        }],
+    };
+
+    //数据加载完之前先显示一段简单的loading动画
+    myChart.showLoading();
+    //日期数组（实际用来盛放X轴坐标值）
+    var xvalues=[];
+    //数量数组（实际用来盛放Y坐标值）
+    var yvalues=[];
+    $.ajax({
+        type: "GET",
+        async: true,
+        url: host+"admin/sys/log",
+        dataType: 'json',
+        data: {},
+        success : function (result) {
+            //请求成功时执行该函数内容，result即为服务器返回的json对象
+            if (result) {
+                for (var i = 0; i < result.length; i++) {
+                    xvalues.push(result[i].someDay);
+                }
+                for (var i = 0; i <result.length; i++) {
+                    yvalues.push(result[i].recordCount);
+                }
+                myChart.hideLoading();
+                myChart.setOption({
+                    xAxis: {
+                        data: xvalues
+                    },
+                    series:[{
+                        type: 'line',
+                        name: "该日访问量",
+                        data: yvalues,
+                        showSymbol: true,
+                        animationEasing: 'linear',
+                        animationDuration: 1000,
+                    }],
+                });
+            }
+        },
+        //请求失败时执行该函数
+        error : function() {
+            layer.alert("图表数据请求失败了（╯' - ')╯（ ┻━┻", { icon: 2, title: "提示信息", offset: "auto", skin: 'layui-layer-molv' });
+            myChart.hideLoading();
+        }
+    });
+    myChart.setOption(option);
+
+</script>
+</body>
+</html>

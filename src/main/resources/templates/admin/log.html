@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="utf-8">
+    <title>后台管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" th:href="@{/static/layuiadmin/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/static/layuiadmin/style/admin.css}" media="all">
+    <link rel="stylesheet" th:href="@{/static/css/userInfo.css}" >
+    <link rel="stylesheet" th:href="@{/static/css/index.css}" >
+    <link rel="shortcut icon" th:href="@{/static/favicon.ico}" type="image/x-icon">
+    <script>
+        /^http(s*):\/\//.test(location.href) || alert('请先部署到 localhost 下再访问');
+    </script>
+</head>
+<body>
+
+<div class="layui-fluid layui-anim" lay-title="系统日志">
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+
+                    <form class="layui-form layui-table-form" action="" lay-filter="log-form" style="margin-top: 20px;margin-bottom: -20px">
+                        <div class="layui-row">
+                            <div class="layui-col-md10">
+                                <div class="layui-form-item">
+                                    <div class="layui-col-md9" >
+                                        <div class="layui-form-item" >
+                                            <div class="layui-inline">
+                                                <label class="layui-form-label layui-form-label">查询用户：</label>
+                                                <div class="layui-input-inline">
+                                                    <input type="text" name="username" id="username" autocomplete="off" class="layui-input" >
+                                                </div>
+                                            </div>
+
+                                            <div class="layui-inline">
+                                                <label class="layui-form-label layui-form-label">查询IP：</label>
+                                                <div class="layui-input-inline">
+                                                    <input type="text" name="loginIp" id="loginIp" autocomplete="off" class="layui-input" >
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="layui-col-md2 table-action-area">
+                                <div class="layui-btn layui-btn-sm layui-btn-primary table-action" id="search" data-type="reload">
+                                    <i class="layui-icon layui-icon-search"></i>
+                                </div>
+                                <button type="reset" class="layui-btn layui-btn-sm layui-btn-primary table-action" id="refresh">
+                                    <i class="layui-icon layui-icon-refresh"></i>
+                                </button>
+
+                            </div>
+                        </div>
+                    </form>
+                    <hr class="layui-bg-green" style="margin-bottom: -8px">
+                    <table id="demo" class="layui-table" lay-filter="demo" style="margin-top: -30px"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/html" id="barDemo">
+    <a shiro:hasRole="root" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+    <a shiro:lacksRole="root" class="layui-badge-dot layui-bg-orange"><a> 无权限</a></a>
+</script>
+
+<script th:src="@{/static/js/jquery-3.4.1.js}"></script>
+<script th:src="@{/static/js/jquery.nicescroll.js}"></script>
+<script th:src="@{/static/layui/layui.js}"></script>
+<script th:src="@{/static/dream/localhost.js}"></script>
+<script data-th-inline="none" type="text/javascript">
+    /*回显表单元素 已确定 谨慎更改*/
+    layui.use(['table','form','jquery'],function () {
+        var form = layui.form;
+        form.render();
+        var table = layui.table;
+
+        table.render({
+            elem: '#demo',
+            method:'GET',
+            async: false,
+            dataType:'JSON',
+            url: host + 'admin/sys/logs',
+            id: 'logReload',
+            data: 'username=&ip=',
+            page: true,
+            limits:[10,20,50],
+            cols: [[
+                {type:'radio'}
+                ,{field: 'username', title: '登录用户', width:100}
+                ,{field: 'ip', title: 'IP地址', width:130}
+                ,{field: 'createTime', title: '登录时间',
+                    templet: '<div>{{layui.util.toDateString(d.createTime, "yyyy-MM-dd  HH:mm:ss") }}</div>',
+                    width: 180, sort: true}
+                ,{field: 'osVersion', title: '登录系统', width:120}
+                ,{field: 'browser', title: '浏览器', width:150,templet: function (d) {
+                        const str = d.browser;
+                        return str.substr(0,13);
+                    }}
+                ,{field: 'operateUrl', title: '访问地址', width: 300}
+                ,{fixed: 'right', title:'操作',align: 'center', toolbar: '#barDemo', width:110}
+            ]],
+        });
+
+        var $ = layui.$, active = {
+            reload: function () {
+                var username = $('#username').val();
+                var ip = $('#loginIp').val();
+                table.reload('logReload', {
+                    page: {
+                        curr: 1
+                    }
+                    , where: {
+                        username: username,
+                        ip: ip,
+                    }
+                }, 'data');
+            }
+        };
+
+        $('#search').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+        //删除事件
+        table.on('tool(demo)', function(obj){
+            var data = obj.data;
+            var id = data.id;
+            if(obj.event === 'delete'){
+                layer.confirm('<div style="text-align: center;">确定删除该条日志信息?</div>',{title: '确认删除框',btn: ['删除','取消']}, function (index) {
+                    $.ajax({
+                        url: host + "admin/sys/log",
+                        type: 'DELETE',
+                        data : {id:id},
+                        dataType: "json",
+                        async:true,
+                        success: function (result) {
+                            if (result.status === 200) {
+                                obj.del();
+                                layer.close(index);
+                                layer.msg(result.msg,{icon: 6});
+                            } else {
+                                layer.msg(result.msg,{icon: 5})
+                            }
+                        }
+                    })
+                })
+            }
+        });
+    });
+</script>
+</body>
+</html>
