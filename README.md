@@ -41,7 +41,7 @@
 #### 后端
 - [Spring Boot](http://spring.io/projects/spring-boot/)
 - [Mybatis-Plus](https://mp.baomidou.com/guide/)
-- [MySQL 8.x.x](https://dev.mysql.com/downloads/mysql/8.x.html#downloads),
+- [MySQL 8.x.x](https://dev.mysql.com/downloads/mysql/8.x.html#downloads),[Druid](http://druid.apache.org/)
 - [Shiro 1.4.2](http://shiro.apache.org/)
 - [Docker](https://www.docker.com/)
 
