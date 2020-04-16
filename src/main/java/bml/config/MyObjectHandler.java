@@ -10,6 +10,7 @@ import java.util.Date;
 /**
  * @author 月影
  * Date 2020/3/20 21:40
+ * Mybatis-Plus自动填充设置
  */
 @Slf4j
 @Component

@@ -79,6 +79,7 @@
                                 <button type="button" shiro:lacksRole="root,admin" style="margin-left: 233px;margin-top: 10px" class="layui-btn layui-btn-normal layui-btn-disabled" lay-submit="" lay-filter="*">权限不足</button>
                             </div>
                         </div>
+
                     </form>
                 </div>
             </div>
@@ -112,11 +113,13 @@
                             <br>
                             <div class="eleTree ele2" style="margin-left: 110px;margin-top: -18px"></div>
                         </div>
+
                         <div class="layui-form-item">
                             <div class="layui-input-block">
                                 <button style="margin-left: 253px;margin-top: 10px" class="layui-btn layui-btn-normal" id="updateRole" lay-submit="" lay-filter="updateRole">更新</button>
                             </div>
                         </div>
+
                     </form>
                 </div>
             </div>
@@ -151,6 +154,8 @@
             return false;
         }
     });
+
+    //获取权限树数据
     function getData() {
         let data = "";
         $.ajax({
@@ -160,17 +165,19 @@
             //这里不能改为true
             async:false,
             success:function(result){
-                data = result;
+                data = result.data.data;
             }
         });
         return data;
     }
 
+    /*回显表单元素 已确定 谨慎更改*/
     layui.config({
         base: "/static/js/"
-    }).use([ 'element','util','layer','jquery','eleTree','form'], function () {
-        var $ = layui.jquery;
+    }).use(['table','form','layer','eleTree','element','util','jquery'],function () {
+        var table = layui.table;
         var form = layui.form;
+        var layer = layui.layer;
         var eleTree = layui.eleTree;
 
         const ele = eleTree.render({
@@ -211,32 +218,28 @@
                     contentType: "application/json;charset=UTF-8",
                     success: function (result) {
                         if (result.status === 200) {
-                            //重置表单
+                            //增加成功则重置右侧表单并刷新左侧表格
                             formReset();
                             //刷新左侧表格
-
+                            table.reload('roleReload',{
+                                page: {
+                                    curr: 1
+                                }
+                            });
                             layer.msg(result.msg)
                         } else {
+                            formReset();
                             layer.msg(result.msg)
                         }
                     },
                     error: function () {
-                        layer.msg("添加失败!")
+                        layer.msg("权限不足,添加失败!")
                     }
                 });
             }
             return false;
         });
-    });
 
-    /*回显表单元素 已确定 谨慎更改*/
-    layui.config({
-        base: "/static/js/"
-    }).use(['table','form','layer','eleTree'],function () {
-        var table = layui.table;
-        var form = layui.form;
-        var layer = layui.layer;
-        var eleTree = layui.eleTree;
         table.render({
             elem: '#roleTable',
             method:'GET',
@@ -249,6 +252,13 @@
             limits:[5,10,20],
             limit:5,
             toolbar: '#toolbar',
+            parseData:function(result) {
+                return {
+                    "code": result.status,
+                    "count": result.data.count,
+                    "data":result.data.data
+                }
+            },
             cols: [[
                 {type:'checkbox'}
                 ,{field: 'roleName', title: '角色名', width:90}
@@ -361,7 +371,6 @@
                     dataType: "json",
                     async:false,
                     success: function (result) {
-
                         var ele2 = eleTree.render({
                             elem: '.ele2',
                             data: getData(),
@@ -407,11 +416,20 @@
                                     contentType: "application/json;charset=UTF-8",
                                     success: function (result) {
                                         if (result.status === 200) {
+                                            //更新成功则重置右侧表单
                                             formReset2();
+                                            //更新页面切换成新增页面
                                             add.style.display = 'flex';
                                             update.style.display = 'none';
+                                            //重载左侧表单
+                                            table.reload('roleReload',{
+                                                page: {
+                                                    curr: 1
+                                                }
+                                            });
                                             layer.msg(result.msg)
                                         } else {
+                                            formReset2();
                                             layer.msg(result.msg)
                                         }
                                     }

@@ -2,6 +2,7 @@ package bml.others;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -10,7 +11,7 @@ import java.util.Date;
  * 注：workNumber、workStatus如果是byte类型则接收不到数据
  */
 @Data
-public class BmlWorkDto {
+public class BmlWorkDto implements Serializable {
 
     private Integer id;
 

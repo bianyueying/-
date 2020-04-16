@@ -151,11 +151,11 @@
     <ul class="layui-tab-title">
         <li class="layui-this">后田花子</li>
         <li>阿里系</li>
-        <!--<li>脸萌</li>-->
+        <li shiro:hasAnyRoles="root,admin">管理员特权</li>
     </ul>
     <div class="layui-tab-content" id="slider" onclick="changePic(event);">
         <input type="hidden" id="userId" name="userId" th:value="${user.getId()}">
-        <div class="layui-tab-item layui-show" >
+        <div class="layui-tab-item layui-show">
             <img data-th-src="@{/static/images/01.jpg}" title="点击更换" alt="" src="" id="01.jpg">
             <img data-th-src="@{/static/images/02.jpg}" title="点击更换" alt="" src="" id="02.jpg">
             <img data-th-src="@{/static/images/03.jpg}" title="点击更换" alt="" src="" id="03.jpg">
@@ -171,14 +171,15 @@
             <img data-th-src="@{/static/images/15.png}" title="点击更换" alt="" src="" id="15.png">
             <img data-th-src="@{/static/images/16.png}" title="点击更换" alt="" src="" id="16.png">
         </div>
-        <!--<div class="layui-tab-item">
-            <img data-th-src="@{/static/images/21.jpg}" title="点击更换" alt="" src="">
-            <img data-th-src="@{/static/images/22.jpg}" title="点击更换" alt="" src="">
-            <img data-th-src="@{/static/images/23.jpg}" title="点击更换" alt="" src="">
-            <img data-th-src="@{/static/images/24.jpg}" title="点击更换" alt="" src="">
-            <img data-th-src="@{/static/images/25.jpg}" title="点击更换" alt="" src="">
-            <img data-th-src="@{/static/images/26.jpg}" title="点击更换" alt="" src="">
-        </div>-->
+        <div class="layui-tab-item">
+            <img data-th-src="@{/static/images/24.jpg}" title="点击更换" alt="" src="" id="24.jpg">
+            <img data-th-src="@{/static/images/25.jpg}" title="点击更换" alt="" src="" id="25.jpg">
+            <img data-th-src="@{/static/images/26.jpg}" title="点击更换" alt="" src="" id="26.jpg">
+            <img data-th-src="@{/static/images/27.jpeg}" title="点击更换" alt="" src="" id="27.jpeg">
+            <img data-th-src="@{/static/images/28.jpg}" title="点击更换" alt="" src="" id="28.jpg">
+            <img data-th-src="@{/static/images/29.jpg}" title="点击更换" alt="" src="" id="29.jpg">
+        </div>
+
     </div>
 </div>
 
@@ -188,9 +189,10 @@
 <script data-th-inline="none" type="text/javascript">
 
     function openAvatar() {
-        layui.use(['layer','jquery'],function () {
+        layui.use(['layer','jquery','element'],function () {
             var $ = layui.jquery;
             var layer = layui.layer;
+            var element = layui.element;
             layer.open({
                 type: 1,
                 resize: false,
@@ -224,10 +226,10 @@
                     contentType: "application/json;charset=utf-8",
                     success: function (result) {
                         if (result.status === 200) {
-                            layer.msg("更改头像成功 自动刷新");
-                            setTimeout(window.location.reload,1500);
-                            //window.location.reload();
+                            layer.msg("头像更新成功，两秒后将为您自动刷新页面");
+                            setTimeout("parent.location.reload()",2000);
                         } else {
+                            //此处好像会自动关闭弹出层
                             layer.msg("更改头像失败");
                         }
                     }
@@ -255,7 +257,6 @@
                     $(':focus').blur();
                     form.render();
                 },
-
                 btn1: function () {
                     const data = form.val('user-add-form');
                     $.ajax({
@@ -266,12 +267,10 @@
                         contentType: "application/json;charset=utf-8",
                         success: function (result) {
                             if (result.status === 200) {
-                                layer.msg("更新成功 一秒后为您返回");
-
-                                setTimeout("location.reload()",1000);
+                                layer.msg("更新成功!");
+                                window.location.reload();
                             } else {
-                                layer.msg("更新失败");
-                                location.reload();
+                                layer.msg("更新失败...");
                             }
                         }
                     });

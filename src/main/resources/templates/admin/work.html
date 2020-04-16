@@ -245,6 +245,14 @@
             id: 'workReload',
             page: true,
             limits:[10,20,50],
+
+            parseData:function(result) {
+                return {
+                    "code": result.status,
+                    "count": result.data.count,
+                    "data":result.data.data
+                }
+            },
             cols: [[
                 {field:'id', title: 'ID', width:65, sort: true}
                 ,{field: 'workName', title: '职位名', width:100}

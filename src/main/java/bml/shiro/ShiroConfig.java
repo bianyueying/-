@@ -49,6 +49,8 @@ public class ShiroConfig {
         filterMap.put("/webjars/**","anon");
         filterMap.put("/configuration/security","anon");
         filterMap.put("/configuration/ui","anon");
+        //Druid相关
+        filterMap.put("/druid/**","anon");
 
         /*
           授权过滤器 当授权拦截后 shiro会自动跳转到一个错误界面 下面可以自定义

@@ -11,9 +11,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -34,7 +32,7 @@ public class PagesController {
     /**
      * 前台登录跳转模块
      */
-    @RequestMapping(value = "/login", method=RequestMethod.GET)
+    @GetMapping("/login")
     public String login() {
         return "login";
     }
@@ -42,7 +40,7 @@ public class PagesController {
     /**
      * 后台页面跳转模块
      */
-    @RequestMapping(value = "/admin/index", method=RequestMethod.GET)
+    @GetMapping("/admin/index")
     public String adminPages(Model model) {
         Subject subject = SecurityUtils.getSubject();
         //这行代码可以获取到登陆者信息
@@ -53,7 +51,7 @@ public class PagesController {
         return "admin/index";
     }
 
-    @RequestMapping(value = "/admin/console",method = RequestMethod.GET)
+    @GetMapping("/admin/console")
     public String console(Model model){
         Subject subject = SecurityUtils.getSubject();
         BmlUser user= (BmlUser) subject.getPrincipal();
@@ -65,18 +63,15 @@ public class PagesController {
         return "admin/console";
     }
 
-    @RequestMapping(value = "/admin/userInfo",method = RequestMethod.GET)
+    @GetMapping("/admin/userInfo")
     public String userInfo(Model model){
         Subject subject = SecurityUtils.getSubject();
         BmlUser user= (BmlUser) subject.getPrincipal();
-        Session session = subject.getSession();
-        session.setAttribute("user",user);
         model.addAttribute("user", user);
         return "admin/userInfo";
     }
 
-
-    @RequestMapping(value = "/admin/log",method = RequestMethod.GET)
+    @GetMapping("/admin/log")
     public String log(Model model) {
         Subject subject = SecurityUtils.getSubject();
         BmlUser user= (BmlUser) subject.getPrincipal();
@@ -84,8 +79,7 @@ public class PagesController {
         return "admin/log";
     }
 
-
-    @RequestMapping(value = "/admin/workAdd",method = RequestMethod.GET)
+    @GetMapping("/admin/workAdd")
     public String workAdd(Model model){
         Subject subject = SecurityUtils.getSubject();
         BmlUser user= (BmlUser) subject.getPrincipal();
@@ -93,8 +87,7 @@ public class PagesController {
         return "admin/workAdd";
     }
 
-
-    @RequestMapping(value = "/admin/work",method = RequestMethod.GET)
+    @GetMapping("/admin/work")
     public String work(Model model){
         Subject subject = SecurityUtils.getSubject();
         BmlUser user= (BmlUser) subject.getPrincipal();
@@ -102,8 +95,7 @@ public class PagesController {
         return "admin/work";
     }
 
-
-    @RequestMapping(value = "/admin/category",method = RequestMethod.GET)
+    @GetMapping("/admin/category")
     public String category(Model model){
         Subject subject = SecurityUtils.getSubject();
         BmlUser user= (BmlUser) subject.getPrincipal();
@@ -111,8 +103,7 @@ public class PagesController {
         return "admin/category";
     }
 
-
-    @RequestMapping(value = "/admin/role",method = RequestMethod.GET)
+    @GetMapping("/admin/role")
     public String role(Model model){
         Subject subject = SecurityUtils.getSubject();
         BmlUser user= (BmlUser) subject.getPrincipal();
@@ -120,7 +111,7 @@ public class PagesController {
         return "admin/role";
     }
 
-    @RequestMapping(value = "/admin/permission",method = RequestMethod.GET)
+    @GetMapping("/admin/permission")
     public String permission(Model model){
         Subject subject = SecurityUtils.getSubject();
         BmlUser user= (BmlUser) subject.getPrincipal();
@@ -128,7 +119,7 @@ public class PagesController {
         return "admin/permission";
     }
 
-    @RequestMapping(value = "/admin/consumer",method = RequestMethod.GET)
+    @GetMapping("/admin/consumer")
     public String user(Model model){
         Subject subject = SecurityUtils.getSubject();
         BmlUser user= (BmlUser) subject.getPrincipal();
@@ -136,15 +127,14 @@ public class PagesController {
         return "admin/user";
     }
 
-
-    @RequestMapping(value = "/logout",method = RequestMethod.GET)
+    @GetMapping("/logout")
     public String logout(){
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
         return "/login";
     }
 
-    /*@RequestMapping(value = "/error/{page}",method = RequestMethod.GET)
+    /*@GetMapping("/error/{page}")
     public String error(@PathVariable String page){
         return "/error/"+page;
     }*/

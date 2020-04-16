@@ -33,8 +33,8 @@ public class LoginController {
     BmlUserService userService;
 
     @ApiOperation("登录验证逻辑")
-    @RequestMapping(value = "/user/login", method = RequestMethod.POST)
-    public BmlResult login(String username, String password, String code, Boolean rememberMe, HttpServletRequest request){
+    @PostMapping("/user/login")
+    public BmlResult<Object> login(String username, String password, String code, Boolean rememberMe, HttpServletRequest request){
         //获取实体
         Subject subject = SecurityUtils.getSubject();
         //创建令牌
@@ -48,42 +48,41 @@ public class LoginController {
                 subject.login(token);
                 // 此处设置登录时间
                 userService.setLoginTime(username);
-                return new BmlResult(200,"登录成功");
+                return new BmlResult<>(200,"登录成功");
             } catch (UnknownAccountException e) {
-                return new BmlResult(201,"账号不存在");
+                return new BmlResult<>(201,"账号不存在");
             } catch (IncorrectCredentialsException e) {
-                return new BmlResult(202,"账号名或密码错误");
+                return new BmlResult<>(202,"账号名或密码错误");
             } catch (AuthenticationException e) {
-                return new BmlResult(203,"未知错误");
+                return new BmlResult<>(203,"未知错误");
             }
         } else {
             CaptchaUtil.clear(request);
-            return new BmlResult(100,"验证码错误");
+            return new BmlResult<>(100,"验证码错误");
         }
     }
 
     @ApiOperation("检查用户名是否重复")
-    @RequestMapping(value = "/user/check", method = RequestMethod.POST)
-    public BmlResult check(String username) {
+    @PostMapping("/user/check")
+    public BmlResult<Object> check(String username) {
         QueryWrapper<BmlUser> wrapper = new QueryWrapper<>();
         wrapper.eq("username",username);
         BmlUser user = userService.getOne(wrapper);
         if (StringUtil.checkUsername(username)) {
             /*如果为空则表明用户名不重复*/
             if (user == null) {
-                return new BmlResult(200,"当前用户名可用");
+                return new BmlResult<>(200,"当前用户名可用");
             } else {
-                return new BmlResult(201,"当前用户名已被占用");
+                return new BmlResult<>(201,"当前用户名已被占用");
             }
         } else {
-            return new BmlResult(202,"用户名不符合条件");
+            return new BmlResult<>(202,"用户名不符合条件");
         }
     }
 
-
     @ApiOperation("注册用户")
-    @RequestMapping(value = "/user/add",method = RequestMethod.POST)
-    public BmlResult add(@RequestBody BmlUser user) {
+    @PostMapping("/user/add")
+    public BmlResult<Object> add(@RequestBody BmlUser user) {
         QueryWrapper<BmlUser> wrapper = new QueryWrapper<>();
         wrapper.eq("username",user.getUsername());
         BmlUser one = userService.getOne(wrapper);
@@ -93,17 +92,17 @@ public class LoginController {
             if (one == null) {
                 user.setPassword(Md5Util.encrypt(user.getUsername(), user.getPassword()));
                 userService.save(user);
-                return new BmlResult(200,"注册成功 3秒后为您自动跳转");
+                return new BmlResult<>(200,"注册成功 3秒后为您自动跳转");
             } else {
-                return new BmlResult(202,"用户名重复 无法注册");
+                return new BmlResult<>(202,"用户名重复 无法注册");
             }
         } else {
-            return new BmlResult(203,"账号名或密码仅限字母数字组合");
+            return new BmlResult<>(203,"账号名或密码仅限字母数字组合");
         }
     }
 
     @ApiOperation("动态生成验证码")
-    @RequestMapping(value = "/user/captcha",method = RequestMethod.GET)
+    @GetMapping("/user/captcha")
     public void captcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
         // 设置请求头为输出图片类型
         response.setHeader("Pragma", "No-cache");

@@ -1,6 +1,5 @@
 package bml.service;
 
-import bml.entity.BmlLog;
 import bml.entity.BmlUser;
 import com.baomidou.mybatisplus.extension.service.IService;
 

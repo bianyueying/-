@@ -186,6 +186,13 @@
             data: 'username=&gender=&phone=&email=&time=',
             page: true,
             limits:[10,20,50],
+            parseData:function(result) {
+                return {
+                    "code": result.status,
+                    "count": result.data.count,
+                    "data":result.data.data
+                }
+            },
             cols: [[
                 {type:'checkbox'}
                 ,{field: 'username', title: '用户名', width:100}

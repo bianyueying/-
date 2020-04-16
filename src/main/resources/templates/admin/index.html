@@ -63,7 +63,7 @@
           <dl class="layui-nav-child">
             <dd><a lay-href="userInfo" style="text-align: center">个人中心</a></dd>
             <dd><a href="#" style="text-align: center" onclick="updatePassword()">修改密码</a></dd>
-            <dd><a href="#" style="text-align: center">地址(未写)</a></dd>
+            <dd><a href="https://github.com/bianyueying/Design" style="text-align: center" target="_blank">项目地址</a></dd>
             <hr class="layui-bg-orange">
             <dd><a href="#" style="text-align: center" onclick="exitConfirm()">退出登录</a></dd>
           </dl>
@@ -116,20 +116,26 @@
             </dl>
           </li>
 
-          <li data-name="get" class="layui-nav-item">
-            <a href="#" lay-href="log" lay-tips="日志" lay-direction="2">
-              <i class="layui-icon layui-icon-component"></i>
-              <cite>系统日志</cite>
-            </a>
-          </li>
-
           <li data-name="app" class="layui-nav-item">
-            <a href="#" lay-href="/swagger-ui.html" lay-tips="文档" lay-direction="2">
-              <i class="layui-icon layui-icon-read"></i>
-              <cite>Swagger2文档</cite>
+            <a href="javascript:" lay-tips="主页" lay-direction="2">
+              <i class="layui-icon layui-icon-component"></i>
+              <cite>系统配置</cite>
             </a>
-          </li>
+            <dl class="layui-nav-child">
+              <dd data-name="console">
+                <a lay-href="log">系统日志</a>
+              </dd>
 
+              <dd data-name="console">
+                <a lay-href="/swagger-ui.html">Swagger2</a>
+              </dd>
+
+              <dd data-name="console">
+                <a lay-href="/druid/index.html">Druid监控</a>
+              </dd>
+
+            </dl>
+          </li>
         </ul>
       </div>
     </div>

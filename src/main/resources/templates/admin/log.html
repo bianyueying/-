@@ -48,10 +48,10 @@
                             </div>
 
                             <div class="layui-col-md2 table-action-area">
-                                <div class="layui-btn layui-btn-sm layui-btn-primary table-action" id="search" data-type="reload">
+                                <div class="layui-btn table-action" id="search" data-type="reload">
                                     <i class="layui-icon layui-icon-search"></i>
                                 </div>
-                                <button type="reset" class="layui-btn layui-btn-sm layui-btn-primary table-action" id="refresh">
+                                <button type="reset" class="layui-btn table-action" id="refresh">
                                     <i class="layui-icon layui-icon-refresh"></i>
                                 </button>
 
@@ -94,6 +94,14 @@
             data: 'username=&ip=',
             page: true,
             limits:[10,20,50],
+            // 从封装的数据结构里拿到结果
+            parseData:function(result) {
+                return {
+                    "code": result.status,
+                    "count": result.data.count,
+                    "data":result.data.data
+                }
+            },
             cols: [[
                 {type:'radio'}
                 ,{field: 'username', title: '登录用户', width:100}

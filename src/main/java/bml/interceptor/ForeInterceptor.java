@@ -51,13 +51,9 @@ public class ForeInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
-        try {
-            HandlerMethod handlerMethod = (HandlerMethod) handler;
-            Method method = handlerMethod.getMethod();
-            bmlLog.setRemark(method.getName());
-            logService.save(bmlLog);
-        }catch (ClassCastException e) {
-            System.out.println("点击了Swagger2文档链接");
-        }
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        Method method = handlerMethod.getMethod();
+        bmlLog.setRemark(method.getName());
+        logService.save(bmlLog);
     }
 }

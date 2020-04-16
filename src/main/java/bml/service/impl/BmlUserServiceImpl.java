@@ -3,7 +3,6 @@ package bml.service.impl;
 import bml.entity.BmlUser;
 import bml.mapper.BmlUserMapper;
 import bml.service.BmlUserService;
-import bml.util.Md5Util;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;

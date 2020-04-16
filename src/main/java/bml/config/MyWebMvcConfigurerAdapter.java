@@ -16,7 +16,6 @@ import java.util.List;
  * @author 月影
  * Date 2020/2/16 10:19
  */
-
 @Configuration
 public class MyWebMvcConfigurerAdapter implements WebMvcConfigurer {
 
@@ -37,17 +36,13 @@ public class MyWebMvcConfigurerAdapter implements WebMvcConfigurer {
         converters.add(responseBodyConverter());
     }
 
-    @Override
-    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        configurer.favorPathExtension(false);
-    }
+
 
     /**
      * 拦截器
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-
         /*
          * addPathPatterns 添加拦截规则
          * excludePathPatterns 排除拦截
@@ -70,6 +65,11 @@ public class MyWebMvcConfigurerAdapter implements WebMvcConfigurer {
                 "classpath:/META-INF/resources/webjars/");
         WebMvcConfigurer.super.addResourceHandlers(registry);
     }
+
+    /*@Override
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        configurer.favorPathExtension(false);
+    }*/
 
 }
 

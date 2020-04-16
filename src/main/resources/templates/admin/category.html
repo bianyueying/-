@@ -18,6 +18,7 @@
 <body>
     <div class="layui-fluid layui-anim" lay-title="分类管理">
         <div class="layui-row layui-col-space8">
+
             <div class="layui-col-md6 layui-col-sm6 layui-col-xs12">
                 <div class="layui-card">
                     <div class="layui-card-body">
@@ -26,6 +27,35 @@
                     </div>
                 </div>
             </div>
+
+            <div class="layui-col-md6 layui-col-sm12 layui-col-xs12" id="add-form">
+                <div class="layui-card">
+                    <div class="layui-card-header">新增父级菜单</div>
+                    <div class="layui-card-body">
+                        <form class="layui-form" action="" id="addForm" lay-filter="addForm">
+                            <div class="layui-form-item" style="margin-top: 20px">
+                                <label class="layui-form-label">父ID：</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" value="0" name="parentId" id="parentId" readonly class="layui-input">
+                                </div>
+                                <div class="layui-form-mid layui-word-aux">默认ID 无法更改</div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">名称：</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="title" id="title" autocomplete="off" class="layui-input" lay-verify="required">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button style="margin-top: 10px" class="layui-btn layui-btn-normal" id="addCategory" lay-submit="" lay-filter="addCategory">提交</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 <script th:src="@{/static/js/jquery-3.4.1.js}"></script>
@@ -34,9 +64,39 @@
 <script th:src="@{/static/dream/localhost.js}"></script>
 <script data-th-inline="none" type="text/javascript">
 
-    layui.use(['tree','util'],function () {
+    layui.use(['tree','util','form','layer','jquery'],function () {
         $ = layui.$;
         var tree = layui.tree;
+        var layer = layui.layer;
+        var form = layui.form;
+
+        //新增表单
+        form.on('submit(addCategory)',function (data) {
+            $.ajax({
+                url: host + 'admin/category',
+                type: 'POST',
+                data: JSON.stringify(data.field),
+                dataType: 'json',
+                contentType: "application/json;charset=UTF-8",
+                success: function (result) {
+                    if (result.status === 200) {
+                        //重置表单
+                        document.getElementById("addForm").reset();
+                        //刷新页面以便显示出新增的数据
+                        setTimeout("window.location.reload()",500);
+                        layer.msg(result.msg)
+                    } else {
+                        document.getElementById("addForm").reset();
+                        layer.msg(result.msg)
+                    }
+                },
+                error: function () {
+                    layer.msg("未知错误,添加失败...")
+                }
+            });
+            return false;
+        });
+
         tree.render({
             elem: '#test',
             data: getData(),
@@ -109,14 +169,16 @@
                             success: function (result) {
                                 if (result.status === 200) {
                                     layer.msg(result.msg);
+                                } else if (result.status === 401) {
+                                    tree.reload('test',{
+                                    });
+                                    layer.msg(result.msg)
                                 } else {
                                     layer.msg(result.msg)
                                 }
                             },
                             error: function () {
-                                tree.reload('test',{
-                                });
-                                layer.msg("权限不足,删除失败");
+                                layer.msg("未知错误,删除失败");
                             }
                         });
                     }
@@ -132,8 +194,8 @@
             type:"GET",
             datatype:"json",
             async:false,
-            success:function(result){
-                data = result;
+            success:function(result) {
+                data = result.data.data;
             }
         });
         return data;

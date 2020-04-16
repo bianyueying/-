@@ -17,6 +17,7 @@ import java.util.ArrayList;
 /**
  * @author 月影
  * Date 2020/3/21 14:49
+ * Mybatis-Plus逆向工程
  */
 public class GeneratorCode {
     public static void main(String[] args) {

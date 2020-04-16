@@ -20,14 +20,14 @@
 
     <dependencies>
 
-        <!-- https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-autoconfigure -->
+        <!-- 自动配置相关 -->
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-autoconfigure</artifactId>
             <version>2.1.1</version>
         </dependency>
 
-
+        <!--分页插件-->
         <dependency>
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper-spring-boot-starter</artifactId>
@@ -51,6 +51,7 @@
             <artifactId>shiro-spring</artifactId>
             <version>1.4.0</version>
         </dependency>
+
         <!--Shiro整合Thymeleaf-->
         <dependency>
             <groupId>com.github.theborakompanioni</groupId>
@@ -116,10 +117,6 @@
             <version>3.1.2</version>
         </dependency>
 
-
-
-
-
         <!--下面为初始-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -167,6 +164,7 @@
             </plugin>
         </plugins>
 
+        <!--解决文件可能无法绑定的异常-->
         <resources>
             <resource>
                 <directory>src/main/java</directory>
@@ -175,11 +173,9 @@
                 </includes>
                 <filtering>true</filtering>
             </resource>
-
             <resource>
                 <directory>src/main/resources</directory>
             </resource>
-
         </resources>
     </build>
 

@@ -43,8 +43,8 @@ public class ScheduleTask {
         }
     }
 
-    @ApiOperation("每隔5秒更新数据库 便于前端实时展示")
-    @Scheduled(cron = "*/5 * * * * ?")
+    @ApiOperation("每隔30秒更新数据库 便于前端实时展示")
+    @Scheduled(cron = "*/30 * * * * ?")
     public void updateCount(){
         addCount();
         QueryWrapper<BmlLogCount> wrapper = new QueryWrapper<>();

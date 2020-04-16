@@ -84,7 +84,7 @@
                         <tr>
                             <td style="padding: .8rem;">充数的</td>
                             <td style="padding: .8rem;text-align: right">
-                                <a target="_blank" href="https://github.com/wuyouzhuguli?tab=repositories">所有项目</a>
+                                <a target="_blank" href="">所有项目</a>
                             </td>
                         </tr>
                         <tr>
@@ -93,7 +93,7 @@
                                     <div class="layui-col-md12 layui-col-xs12">
                                         <div class="layui-row">
                                             <div class="layui-col-md12">
-                                                <a target="_blank" href="https://github.com/wuyouzhuguli/FEBS-Shiro">FEBS
+                                                <a target="_blank" href="">FEBS
                                                     Shiro</a>
                                             </div>
                                             <div class="project-desc">
@@ -108,7 +108,7 @@
                                     <div class="layui-col-md12 layui-col-xs12">
                                         <div class="layui-row">
                                             <div class="layui-col-md12">
-                                                <a target="_blank" href="https://github.com/wuyouzhuguli/FEBS-Security">FEBS
+                                                <a target="_blank" href="">FEBS
                                                     Security</a>
                                             </div>
                                             <div class="project-desc">
@@ -125,7 +125,7 @@
                                     <div class="layui-col-md12 layui-col-xs12">
                                         <div class="layui-row">
                                             <div class="layui-col-md12">
-                                                <a target="_blank" href="https://github.com/wuyouzhuguli/FEBS-Vue">FEBS
+                                                <a target="_blank" href="">FEBS
                                                     Vue</a>
                                             </div>
                                             <div class="project-desc">
@@ -140,7 +140,7 @@
                                     <div class="layui-col-md12 layui-col-xs12">
                                         <div class="layui-row">
                                             <div class="layui-col-md12">
-                                                <a target="_blank" href="https://github.com/wuyouzhuguli/FEBS-Actuator">FEBS
+                                                <a target="_blank" href="">FEBS
                                                     Actuator</a>
                                             </div>
                                             <div class="project-desc">
@@ -157,7 +157,7 @@
                                     <div class="layui-col-md12 layui-col-xs12">
                                         <div class="layui-row">
                                             <div class="layui-col-md12">
-                                                <a target="_blank" href="https://github.com/wuyouzhuguli/SpringAll">SpringAll</a>
+                                                <a target="_blank" href="">SpringAll</a>
                                             </div>
                                             <div class="project-desc">
                                                 循序渐进学习Spring Boot、Spring Cloud与Spring Security。
@@ -171,7 +171,7 @@
                                     <div class="layui-col-md12 layui-col-xs12">
                                         <div class="layui-row">
                                             <div class="layui-col-md12">
-                                                <a target="_blank" href="https://github.com/wuyouzhuguli/Conciseness">Conciseness</a>
+                                                <a target="_blank" href="">Conciseness</a>
                                             </div>
                                             <div class="project-desc">
                                                 Leanote博客主题Conciseness。
@@ -188,7 +188,7 @@
                                         <div class="layui-row">
                                             <div class="layui-col-md12">
                                                 <a target="_blank"
-                                                   href="https://github.com/wuyouzhuguli/Material-Design">Material
+                                                   href="">Material
                                                     Design</a>
                                             </div>
                                             <div class="project-desc">
@@ -204,7 +204,7 @@
                                         <div class="layui-row">
                                             <div class="layui-col-md12">
                                                 <a target="_blank"
-                                                   href="https://github.com/wuyouzhuguli/Summer">Summer</a>
+                                                   href="">Summer</a>
                                             </div>
                                             <div class="project-desc">
                                                 Leanote博客主题🌴Summer。
@@ -228,10 +228,6 @@
 <script th:src="@{/static/layuiadmin/config.js}"></script>
 <script th:src="@{/static/dream/localhost.js}"></script>
 <script data-th-inline="none" type="text/javascript">
-
-    $(document).ready(function(){
-        $("html").niceScroll();
-    });
 
     /*已确定 谨慎更改*/
     var myChart = echarts.init(document.getElementById('leftChart'),'macarons');
@@ -281,11 +277,12 @@
         success : function (result) {
             //请求成功时执行该函数内容，result即为服务器返回的json对象
             if (result) {
-                for (var i = 0; i < result.length; i++) {
-                    xvalues.push(result[i].someDay);
+                const data = result.data.data;
+                for (var i = 0; i < data.length; i++) {
+                    xvalues.push(data[i].someDay);
                 }
-                for (var i = 0; i <result.length; i++) {
-                    yvalues.push(result[i].recordCount);
+                for (var i = 0; i <data.length; i++) {
+                    yvalues.push(data[i].recordCount);
                 }
                 myChart.hideLoading();
                 myChart.setOption({

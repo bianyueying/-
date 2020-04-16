@@ -137,7 +137,7 @@
             //这里不能改为true
             async:false,
             success:function(result){
-                data = result;
+                data = result.data.data;
             }
         });
         return data;
@@ -398,7 +398,6 @@
                             showLine: true,
                             contextmenuList: ["add","remove"],
                             checkStrictly: true,
-                            defaultExpandAll: true,
                             showCheckbox: true,
                         });
                         layer.msg(result.msg)
