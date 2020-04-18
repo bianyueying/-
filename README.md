@@ -1,4 +1,4 @@
-# 后台管理系统（第二版）
+# 后台管理系统（第2.5版）
 
 ### IDEA需要安装lombok插件
 ### 系统模块
@@ -46,6 +46,7 @@
 - [MySQL8](https://dev.mysql.com/downloads/mysql/8.x.html#downloads), [Druid](http://druid.apache.org/)
 - [Shiro](http://shiro.apache.org/)
 - [Docker](https://www.docker.com/)
+- [Redis](https://redis.io/)
 
 #### 前端
 - [LayuiAdmin](https://www.layui.com/)
@@ -96,4 +97,10 @@
 
 4.后续会添加redis，应该在4月20号就搞定了...
 
+
+### 第2.5版说明：
+> + 1.集成redis；这个项目里我只是简单的用了一下，如果有人下载了不想用，只需要把控制层LoginController类里面的@Cacheable(cacheNames = "usernameCheck")这一行去掉就行。（话说shiro集成redis真XX的是一个大坑，不过还好，爬了两天我终于爬出来了......）
+> + 2.接下来就要专注补充一些功能了（个人打算再添加三个页面这毕设就完结了......）
+   
+   
 ### [这是我参考的大佬项目，点我去膜拜一下吧！](https://shiro.mrbird.cn:8080/login)
