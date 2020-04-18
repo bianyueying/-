@@ -2,6 +2,7 @@ package bml.shiro;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import org.apache.shiro.codec.Base64;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -9,11 +10,19 @@ import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.crazycake.shiro.RedisCacheManager;
+import org.crazycake.shiro.RedisManager;
+import org.crazycake.shiro.RedisSessionDAO;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.Base64Utils;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,19 +33,27 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
 
+    @Value("${spring.redis.host}")
+    private String host;
+    @Value("${spring.redis.port}")
+    private int port;
+    @Value("${spring.redis.timeout}")
+    private int timeout;
+
     /**
      * 创建ShiroFilterFactoryBean
      */
     @Bean
-    public ShiroFilterFactoryBean shiroFilterFactoryBean(@Qualifier("securityManager")DefaultWebSecurityManager securityManager){
+    public ShiroFilterFactoryBean shiroFilterFactoryBean(@Qualifier("securityManager")SecurityManager securityManager){
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         //设置安全管理器
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         //过滤集合
         Map<String,String> filterMap = new LinkedHashMap<>(100);
         //只允许以下请求无权限也可访问
+        filterMap.put("/","anon");
+        filterMap.put("/index","anon");
         filterMap.put("/login","anon");
-        filterMap.put("/register","anon");
         filterMap.put("/user/login","anon");
         filterMap.put("/user/check","anon");
         filterMap.put("/user/add","anon");
@@ -52,10 +69,7 @@ public class ShiroConfig {
         //Druid相关
         filterMap.put("/druid/**","anon");
 
-        /*
-          授权过滤器 当授权拦截后 shiro会自动跳转到一个错误界面 下面可以自定义
-          此处的意思是 rootPlus 请求只有权限为rootPlus的用户才能访问成功
-         */
+        // 此处的意思是 bml 请求只有权限为bml的用户才能访问成功
         filterMap.put("/bml", "perms[bml]");
         //除上面的之外 前端所有请求都需要权限
         filterMap.put("/*","authc");
@@ -75,13 +89,17 @@ public class ShiroConfig {
      * 创建DefaultWebSecurityManager
      */
     @Bean(name = "securityManager")
-    public DefaultWebSecurityManager defaultWebSecurityManager(@Qualifier("userRealm") UserRealm userRealm){
+    public SecurityManager defaultWebSecurityManager(){
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         //关联realm
-        securityManager.setRealm(userRealm);
+        securityManager.setRealm(userRealm());
+        // 自定义缓存实现 使用redis
+        securityManager.setCacheManager(cacheManager());
+        // 自定义session管理 使用redis
+        securityManager.setSessionManager(sessionManager());
         //设置记住我功能
         securityManager.setRememberMeManager(rememberMeManager());
-        return new DefaultWebSecurityManager(userRealm);
+        return securityManager;
     }
 
     /**
@@ -109,7 +127,9 @@ public class ShiroConfig {
     public SimpleCookie rememberMeCookie() {
         //这个参数是cookie的名称，对应前端的checkbox的name = rememberMe
         SimpleCookie simpleCookie = new SimpleCookie("rememberMe");
-        //cookie生效时间1天,单位秒;
+        // 为了防止XSS攻击
+        simpleCookie.setHttpOnly(true);
+        // cookie生效时间1天,单位秒;
         simpleCookie.setMaxAge(86400);
         return simpleCookie;
     }
@@ -121,8 +141,12 @@ public class ShiroConfig {
     public CookieRememberMeManager rememberMeManager(){
         CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
         cookieRememberMeManager.setCookie(rememberMeCookie());
+        // rememberMe cookie 加密的密钥
+        String encryptKey = "bml_shiro_key";
+        byte[] encryptKeyBytes = encryptKey.getBytes(StandardCharsets.UTF_8);
+        String rememberKey = Base64Utils.encodeToString(Arrays.copyOf(encryptKeyBytes, 16));
         // cookieRememberMeManager.setCipherKey用来设置加密的Key,参数类型byte[],字节数组长度要求16
-        cookieRememberMeManager.setCipherKey(Base64.decode("4AvVhmFLUs0KTA3Kprsdag=="));
+        cookieRememberMeManager.setCipherKey(Base64.decode(rememberKey));
         return cookieRememberMeManager;
     }
 
@@ -138,21 +162,68 @@ public class ShiroConfig {
     }
 
     /**
-     * 以下三个Bean解决Shiro注解在Controller上不生效的情况
+     * 配置Shiro生命周期处理器
      */
     @Bean
     public static LifecycleBeanPostProcessor getLifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
     }
+    /***
+     * 授权所用配置 解决前端所有API请求都报404错误
+     */
     @Bean
     public static DefaultAdvisorAutoProxyCreator getDefaultAdvisorAutoProxyCreator(){
-        return new DefaultAdvisorAutoProxyCreator();
+        DefaultAdvisorAutoProxyCreator creator = new DefaultAdvisorAutoProxyCreator();
+        creator.setUsePrefix(true);
+        return creator;
     }
+    /**
+     * 解决Shiro注解在Controller上不生效的情况
+     */
     @Bean
-    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(DefaultWebSecurityManager securityManager){
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager){
         AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
         return authorizationAttributeSourceAdvisor;
+    }
+
+    /**
+     * shiro 中配置 redis 缓存
+     * @return RedisManager
+     */
+    public RedisManager redisManager() {
+        RedisManager redisManager = new RedisManager();
+        redisManager.setHost(host);
+        redisManager.setPort(port);
+        // 配置过期时间
+        redisManager.setExpire(timeout);
+        return redisManager;
+    }
+
+
+    public RedisCacheManager cacheManager() {
+        RedisCacheManager redisCacheManager = new RedisCacheManager();
+        redisCacheManager.setRedisManager(redisManager());
+        return redisCacheManager;
+    }
+
+    /**
+     * redisSessionDAO
+     */
+    public RedisSessionDAO redisSessionDAO() {
+        RedisSessionDAO redisSessionDAO = new RedisSessionDAO();
+        redisSessionDAO.setRedisManager(redisManager());
+        return redisSessionDAO;
+    }
+
+    /**
+     * sessionManager
+     */
+    @Bean
+    public DefaultWebSessionManager sessionManager() {
+        DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
+        sessionManager.setSessionDAO(redisSessionDAO());
+        return sessionManager;
     }
 
 }

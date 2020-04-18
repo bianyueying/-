@@ -1,6 +1,7 @@
 package bml.interceptor;
 
 import bml.others.BmlResult;
+import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,11 @@ public class GlobalException {
     public BmlResult<Object> unauthorizedException() {
         LOG.info("普通用户企图越权删除信息");
         return new BmlResult<>(401,"权限不足,删除失败");
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public void authenticationException() {
+        LOG.info("授权逻辑异常");
     }
 
 }

@@ -20,7 +20,7 @@ import java.util.Date;
  * 使用定时器别忘了在启动类上加注解 @EnableScheduling
  */
 @Component
-public class ScheduleTask {
+public class ScheduleConfig {
 
     @Resource
     BmlLogCountService logCountService;

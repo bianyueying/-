@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -13,7 +14,9 @@ import java.util.List;
  * 处理分类的特别类
  */
 @Data
-public class BmlCategoryDto {
+public class BmlCategoryDto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "主键")
     @TableId(value = "id", type = IdType.AUTO)

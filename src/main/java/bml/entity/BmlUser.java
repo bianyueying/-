@@ -23,7 +23,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value="BmlUser对象", description="")
+@ApiModel(value="BmlUser对象", description="用户")
 public class BmlUser implements Serializable {
 
     private static final long serialVersionUID = 1L;

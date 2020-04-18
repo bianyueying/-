@@ -86,7 +86,6 @@ public class BmlRoleController {
     @ApiOperation("更新一条角色信息")
     @PutMapping("/user/role")
     public BmlResult<Object> updateRole(@RequestBody BmlRole bmlRole) {
-        System.out.println(bmlRole);
         try {
             roleService.updateById(bmlRole);
             return new BmlResult<>(200,"更新成功!");

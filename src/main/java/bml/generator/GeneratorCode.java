@@ -71,9 +71,6 @@ public class GeneratorCode {
         list.add(updateTime);
         strategy.setTableFillList(list);
 
-        //乐观锁
-        /*strategy.setVersionFieldName("version");*/
-
         strategy.setRestControllerStyle(true);
         autoGenerator.setStrategy(strategy);
         autoGenerator.execute();

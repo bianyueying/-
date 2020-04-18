@@ -32,7 +32,7 @@ public class PagesController {
     /**
      * 前台登录跳转模块
      */
-    @GetMapping("/login")
+    @GetMapping(value = {"/login","/","/index"})
     public String login() {
         return "login";
     }
@@ -45,8 +45,6 @@ public class PagesController {
         Subject subject = SecurityUtils.getSubject();
         //这行代码可以获取到登陆者信息
         BmlUser user= (BmlUser) subject.getPrincipal();
-        Session session = subject.getSession();
-        session.setAttribute("user",user);
         model.addAttribute("user",user);
         return "admin/index";
     }
@@ -134,6 +132,10 @@ public class PagesController {
         return "/login";
     }
 
+    @GetMapping("/error/403")
+    public String error() {
+        return "/error/403";
+    }
     /*@GetMapping("/error/{page}")
     public String error(@PathVariable String page){
         return "/error/"+page;

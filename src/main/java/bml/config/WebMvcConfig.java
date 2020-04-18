@@ -17,7 +17,7 @@ import java.util.List;
  * Date 2020/2/16 10:19
  */
 @Configuration
-public class MyWebMvcConfigurerAdapter implements WebMvcConfigurer {
+public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean
     public HttpMessageConverter<String> responseBodyConverter() {
@@ -65,11 +65,6 @@ public class MyWebMvcConfigurerAdapter implements WebMvcConfigurer {
                 "classpath:/META-INF/resources/webjars/");
         WebMvcConfigurer.super.addResourceHandlers(registry);
     }
-
-    /*@Override
-    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        configurer.favorPathExtension(false);
-    }*/
 
 }
 

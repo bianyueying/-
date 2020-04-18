@@ -16,6 +16,7 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -64,10 +65,9 @@ public class LoginController {
 
     @ApiOperation("检查用户名是否重复")
     @PostMapping("/user/check")
+    @Cacheable(cacheNames = "usernameCheck")
     public BmlResult<Object> check(String username) {
-        QueryWrapper<BmlUser> wrapper = new QueryWrapper<>();
-        wrapper.eq("username",username);
-        BmlUser user = userService.getOne(wrapper);
+        BmlUser user = userService.getOne(new QueryWrapper<BmlUser>().eq("username",username));
         if (StringUtil.checkUsername(username)) {
             /*如果为空则表明用户名不重复*/
             if (user == null) {
@@ -83,9 +83,7 @@ public class LoginController {
     @ApiOperation("注册用户")
     @PostMapping("/user/add")
     public BmlResult<Object> add(@RequestBody BmlUser user) {
-        QueryWrapper<BmlUser> wrapper = new QueryWrapper<>();
-        wrapper.eq("username",user.getUsername());
-        BmlUser one = userService.getOne(wrapper);
+        BmlUser one = userService.getOne(new QueryWrapper<BmlUser>().eq("username",user.getUsername()));
         //先判断输入的用户名和密码是否满足条件
         if (StringUtil.checkUsername(user.getUsername()) && StringUtil.checkPassword(user.getPassword())) {
             //如果用户为空 则表明用户名可用

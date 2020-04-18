@@ -62,9 +62,7 @@ public class BmlWorkController {
         try {
             //逻辑删除 置1
             workService.removeById(Integer.parseInt(id));
-            QueryWrapper<BmlWorkContent> wrapper = new QueryWrapper<>();
-            wrapper.eq("work_id",Integer.parseInt(id));
-            contentService.remove(wrapper);
+            contentService.remove(new QueryWrapper<BmlWorkContent>().eq("work_id",Integer.parseInt(id)));
             return new BmlResult<>(200,"删除成功!");
         } catch (Exception e) {
             return new BmlResult<>(400,"删除失败...");

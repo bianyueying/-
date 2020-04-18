@@ -49,9 +49,7 @@ public class UserRealm extends AuthorizingRealm {
         //此处编写判断逻辑 用于判断账号密码是否正确
         UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
         //根据登录的名字查询出用户的所有信息
-        QueryWrapper<BmlUser> wrapper = new QueryWrapper<>();
-        wrapper.eq("username",token.getUsername());
-        BmlUser user = userService.getOne(wrapper);
+        BmlUser user = userService.getOne(new QueryWrapper<BmlUser>().eq("username",token.getUsername()));
         //用户为空，则表示用户名不存在 返回null 底层会自动返回未知账号异常
         if (user == null) {
             return null;
