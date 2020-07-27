@@ -220,7 +220,8 @@
                 type: 'get',
                 dataType: 'json',
                 url: host + 'admin/categories',
-                success: function (data) {
+                success: function (result) {
+                    var data = result.data.data;
                     var root = document.getElementById("select");
                     for (var i = 0; i <data.length;i++) {
                         var option = document.createElement("option");

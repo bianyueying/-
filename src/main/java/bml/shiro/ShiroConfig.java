@@ -17,9 +17,11 @@ import org.crazycake.shiro.RedisSessionDAO;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.Base64Utils;
+import org.springframework.web.filter.DelegatingFilterProxy;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -51,8 +53,7 @@ public class ShiroConfig {
         //过滤集合
         Map<String,String> filterMap = new LinkedHashMap<>(100);
         //只允许以下请求无权限也可访问
-        filterMap.put("/","anon");
-        filterMap.put("/index","anon");
+        filterMap.put("/static/**","anon");
         filterMap.put("/login","anon");
         filterMap.put("/user/login","anon");
         filterMap.put("/user/check","anon");

@@ -35,7 +35,7 @@ public class LoginController {
 
     @ApiOperation("登录验证逻辑")
     @PostMapping("/user/login")
-    public BmlResult<Object> login(String username, String password, String code, Boolean rememberMe, HttpServletRequest request){
+    public BmlResult<Object> login(String username, String password, String code, Boolean rememberMe, HttpServletRequest request) {
         //获取实体
         Subject subject = SecurityUtils.getSubject();
         //创建令牌
@@ -67,7 +67,7 @@ public class LoginController {
     @PostMapping("/user/check")
     @Cacheable(cacheNames = "usernameCheck")
     public BmlResult<Object> check(String username) {
-        BmlUser user = userService.getOne(new QueryWrapper<BmlUser>().eq("username",username));
+        BmlUser user = userService.getOne(new QueryWrapper<BmlUser>().eq("username", username));
         if (StringUtil.checkUsername(username)) {
             /*如果为空则表明用户名不重复*/
             if (user == null) {
@@ -83,19 +83,19 @@ public class LoginController {
     @ApiOperation("注册用户")
     @PostMapping("/user/add")
     public BmlResult<Object> add(@RequestBody BmlUser user) {
-        BmlUser one = userService.getOne(new QueryWrapper<BmlUser>().eq("username",user.getUsername()));
+        BmlUser one = userService.getOne(new QueryWrapper<BmlUser>().eq("username", user.getUsername()));
         //先判断输入的用户名和密码是否满足条件
         if (StringUtil.checkUsername(user.getUsername()) && StringUtil.checkPassword(user.getPassword())) {
             //如果用户为空 则表明用户名可用
             if (one == null) {
                 user.setPassword(Md5Util.encrypt(user.getUsername(), user.getPassword()));
                 userService.save(user);
-                return new BmlResult<>(200,"注册成功 3秒后为您自动跳转");
+                return new BmlResult<>(200, "注册成功 3秒后为您自动跳转");
             } else {
-                return new BmlResult<>(202,"用户名重复 无法注册");
+                return new BmlResult<>(202, "用户名重复 无法注册");
             }
         } else {
-            return new BmlResult<>(203,"账号名或密码仅限字母数字组合");
+            return new BmlResult<>(203, "账号名或密码仅限字母数字组合");
         }
     }
 

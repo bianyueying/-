@@ -51,9 +51,13 @@ public class ForeInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
-        HandlerMethod handlerMethod = (HandlerMethod) handler;
-        Method method = handlerMethod.getMethod();
-        bmlLog.setRemark(method.getName());
-        logService.save(bmlLog);
+        try {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            Method method = handlerMethod.getMethod();
+            bmlLog.setRemark(method.getName());
+            logService.save(bmlLog);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

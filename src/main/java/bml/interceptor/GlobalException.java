@@ -21,11 +21,6 @@ public class GlobalException {
 
     private static final Logger LOG = LoggerFactory.getLogger(GlobalException.class);
 
-    @ExceptionHandler(ClassCastException.class)
-    public void classCastException() {
-        LOG.info("点击了Swagger2文档链接,可能会出现异常。");
-    }
-
     @ExceptionHandler(ParseException.class)
     public void parseException() {
         LOG.info("时间转换异常，可能是用户输入的时间格式不对");
@@ -43,4 +38,16 @@ public class GlobalException {
         LOG.info("授权逻辑异常");
     }
 
+    @ExceptionHandler(ArithmeticException.class)
+    public String arithmeticException() {
+        LOG.info("除零异常");
+        return "error/500";
+    }
+
+    @ExceptionHandler(Exception.class)
+    public String exception(Exception e) {
+        e.printStackTrace();
+        LOG.info("未知异常");
+        return "error/500";
+    }
 }

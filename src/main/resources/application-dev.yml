@@ -2,8 +2,8 @@
 # 开发环境
 mybatis-plus:
     # SQL语句打印
-    configuration:
-        log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # configuration:
+        # log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     # 逻辑删除
     global-config:
         db-config:
